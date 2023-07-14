@@ -1,0 +1,27 @@
+﻿  gui.cpp
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(12,14): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(15,14): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(16,20): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(19,16): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(22,20): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(23,27): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(24,31): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.cpp(75,22): warning C4244: 'return': conversion from 'LRESULT' to 'long', possible loss of data
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.cpp(82,28): error C2440: '=': cannot convert from 'long (__cdecl *)(HWND,UINT,WPARAM,LPARAM)' to 'WNDPROC'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.cpp(82,28): message : This conversion requires a reinterpret_cast, a C-style cast or parenthesized function-style cast
+  main.cpp
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(12,14): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(15,14): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(16,20): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(19,16): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(22,20): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(23,27): error C7525: inline variables require at least '/std:c++17'
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.h(24,31): error C7525: inline variables require at least '/std:c++17'
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_dx9.cpp
+  imgui_impl_win32.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  Generating Code...

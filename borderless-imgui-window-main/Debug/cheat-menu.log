@@ -1,0 +1,4 @@
+﻿  gui.cpp
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.cpp(338,41): warning C4244: 'argument': conversion from 'float' to 'size_t', possible loss of data
+C:\Users\danny\Desktop\borderless-imgui-window-main\cheat\gui.cpp(342,41): warning C4244: 'argument': conversion from 'float' to 'size_t', possible loss of data
+  cheat-menu.vcxproj -> C:\Users\danny\Desktop\borderless-imgui-window-main\Debug\cheat-menu.exe
