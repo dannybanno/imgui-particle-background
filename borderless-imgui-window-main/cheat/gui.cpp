@@ -5,6 +5,8 @@
 #include "../imgui/imgui_impl_dx9.h"
 #include "../imgui/imgui_impl_win32.h"
 #include <string>
+#include "../imgui/imgui_internal.h"
+#include "settings.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -269,7 +271,6 @@ void gui::Render() noexcept
 	static ImVec2 particlePositions[numParticles];
 	static ImVec2 particleDistance;
 	static ImVec2 particleVelocities[numParticles];
-	static ImU32 particleColors[numParticles];
 
 	static bool initialized = false;
 	if (!initialized)
@@ -286,7 +287,6 @@ void gui::Render() noexcept
 				static_cast<float>((rand() % 11) - 5)
 			);
 
-			particleColors[i] = IM_COL32_WHITE;
 		}
 
 		initialized = true;
@@ -337,8 +337,10 @@ void gui::Render() noexcept
 		else if (particlePositions[i].y > ImGui::GetWindowPos().y + ImGui::GetWindowSize().y)
 			particlePositions[i].y = ImGui::GetWindowPos().y;
 
-		// Render particles below UI components
-		drawList->AddCircleFilled(particlePositions[i], 1.5f, particleColors[i]);
+		ImU32 particleColour = ImGui::ColorConvertFloat4ToU32(settings::particleColour);
+
+		//render particles behind components
+		drawList->AddCircleFilled(particlePositions[i], 1.5f, particleColour);
 	}
 
 	
@@ -352,7 +354,19 @@ void gui::Render() noexcept
 
 	if (!loggedIn)
 	{
-		// Center the input text
+
+		// round fileds
+		const float rounding = 5.0f;
+		const ImVec2 padding = { 15, 5 };
+		const ImVec4 bgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, bgColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, bgColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, bgColor);
+		ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, bgColor);
+
+
 		//username
 		ImGui::SetCursorPos(ImVec2(200, 150));
 		ImGui::SetNextItemWidth(400.0f);
@@ -364,7 +378,7 @@ void gui::Render() noexcept
 		ImGui::InputText("Password", password, 100.0f, ImGuiInputTextFlags_Password);
 
 		//button
-		ImGui::SetCursorPos(ImVec2(390, 230));
+		ImGui::SetCursorPos(ImVec2(370, 230));
 		if (ImGui::Button("Log In"))
 		{
 			//logs in 
@@ -373,10 +387,14 @@ void gui::Render() noexcept
 				loggedIn = true;
 			}
 		}
+
+		ImGui::PopStyleColor(4);
+		ImGui::PopStyleVar();
 	}
 	else
 	{
 		//logged in stuff
+		ImGui::ColorEdit4("Particle Colour", &settings::particleColour.x);
 		ImGui::Text("Welcome, %s!", username);
 		ImGui::Text("You are logged in.");
 
@@ -386,6 +404,7 @@ void gui::Render() noexcept
 			std::memset(username, 0, sizeof(username));
 			std::memset(password, 0, sizeof(password));
 		}
+
 	}
 
 
