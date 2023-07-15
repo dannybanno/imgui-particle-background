@@ -4,6 +4,7 @@
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx9.h"
 #include "../imgui/imgui_impl_win32.h"
+#include <string>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -181,9 +182,9 @@ void gui::CreateImGui() noexcept
 
 	io.IniFilename = NULL;
 
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsLight();
 
-	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\CASCADIACODE.TTF", 16.0f);
+	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\CASCADIACODE.TTF", 21.25f);
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
@@ -256,7 +257,12 @@ void gui::Render() noexcept
 	);
 
 	//retrieve the ImGui draw list
-	ImDrawList* drawList = ImGui::GetForegroundDrawList();
+	// 
+	//ImDrawList* drawList = ImGui::GetBackgroundDrawList();	//draw behind imgui stuff, looks dark and eh
+	
+	//ImDrawList* drawList = ImGui::GetForegroundDrawList();	//draw ontop of all the other imgui stuff
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList();			//draws like foreground does but behind the imgui stuff. Ideal
 
 	//particle properties
 	static const int numParticles = 115;
@@ -286,21 +292,30 @@ void gui::Render() noexcept
 		initialized = true;
 	}
 
-	bool drawDistanceText = false;
-
+	ImVec2 cursorPos = ImGui::GetIO().MousePos;
 	for (int i = 0; i < numParticles; ++i)
 	{
+		//draw lines to particles
 		for (int j = i + 1; j < numParticles; ++j)
-		{	
+		{
 			float distance = std::hypotf(particlePositions[j].x - particlePositions[i].x, particlePositions[j].y - particlePositions[i].y);
+			float opacity = 1.0f - (distance / 55.0f);  // opacity cahnge
 
-			if (drawDistanceText) {
-				ImGui::Text("Distance between particles %d and %d: %.2f", i, j, distance);
+			if (opacity > 0.0f)
+			{
+				ImU32 lineColor = ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 1.0f, opacity));
+				drawList->AddLine(particlePositions[i], particlePositions[j], lineColor);
 			}
+		}
 
-			if (distance < 55.0f) {
-				drawList->AddLine(particlePositions[i], particlePositions[j], IM_COL32_WHITE);
-			}
+		//draw lines to cursor
+		float distanceToCursor = std::hypotf(cursorPos.x - particlePositions[i].x, cursorPos.y - particlePositions[i].y);
+		float opacityToCursor = 1.0f - (distanceToCursor / 52.0f);  // Adjust the divisor to control the opacity change
+
+		if (opacityToCursor > 0.0f)
+		{
+			ImU32 lineColorToCursor = ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 1.0f, opacityToCursor));
+			drawList->AddLine(cursorPos, particlePositions[i], lineColorToCursor);
 		}
 	}
 
@@ -311,7 +326,7 @@ void gui::Render() noexcept
 		particlePositions[i].x += particleVelocities[i].x * deltaTime;
 		particlePositions[i].y += particleVelocities[i].y * deltaTime;
 
-		//stay in window
+		// Stay in window
 		if (particlePositions[i].x < ImGui::GetWindowPos().x)
 			particlePositions[i].x = ImGui::GetWindowPos().x + ImGui::GetWindowSize().x;
 		else if (particlePositions[i].x > ImGui::GetWindowPos().x + ImGui::GetWindowSize().x)
@@ -322,7 +337,7 @@ void gui::Render() noexcept
 		else if (particlePositions[i].y > ImGui::GetWindowPos().y + ImGui::GetWindowSize().y)
 			particlePositions[i].y = ImGui::GetWindowPos().y;
 
-
+		// Render particles below UI components
 		drawList->AddCircleFilled(particlePositions[i], 1.5f, particleColors[i]);
 	}
 
@@ -330,19 +345,50 @@ void gui::Render() noexcept
 	//ImGui::Text("Num of particles: %d", numParticles);
 
 	//login field for example of use
+	static bool loggedIn = false;
+
 	static char username[256];
 	static char password[256];
-	//user
-	ImGui::SetCursorPos(ImVec2(200, 150));
-	ImGui::SetNextItemWidth(400.0f);
-	ImGui::InputText("Username", username, 100.0f);
-	//pass
-	ImGui::SetCursorPos(ImVec2(200, 190));
-	ImGui::SetNextItemWidth(400.0f);
-	ImGui::InputText("Password", password, 100.0f, ImGuiInputTextFlags_Password);
-	//button
-	ImGui::SetCursorPos(ImVec2(390, 230));
-	ImGui::Button("Login");
+
+	if (!loggedIn)
+	{
+		// Center the input text
+		//username
+		ImGui::SetCursorPos(ImVec2(200, 150));
+		ImGui::SetNextItemWidth(400.0f);
+		ImGui::InputText("Username", username, 100.0f);
+
+		//password
+		ImGui::SetCursorPos(ImVec2(200, 190));
+		ImGui::SetNextItemWidth(400.0f);
+		ImGui::InputText("Password", password, 100.0f, ImGuiInputTextFlags_Password);
+
+		//button
+		ImGui::SetCursorPos(ImVec2(390, 230));
+		if (ImGui::Button("Log In"))
+		{
+			//logs in 
+			if (std::string(username) == "admin" && std::string(password) == "admin")
+			{
+				loggedIn = true;
+			}
+		}
+	}
+	else
+	{
+		//logged in stuff
+		ImGui::Text("Welcome, %s!", username);
+		ImGui::Text("You are logged in.");
+
+		if (ImGui::Button("Log Out"))
+		{
+			loggedIn = false;
+			std::memset(username, 0, sizeof(username));
+			std::memset(password, 0, sizeof(password));
+		}
+	}
+
+
 
 
 	ImGui::End();
